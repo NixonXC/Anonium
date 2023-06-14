@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonium</title>
+    <meta name="description" content="Anonium Realtime Chat.">
+    <meta name="theme-color" content="#d91e1e">
+    <meta name="twitter:image" content="https://i.imgur.com/bsHpnIM.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<script>
+    $(document).ready(function() {
+      var socket = io.connect()
+        socket.on('connect', function() {
+          socket.send("User Connected!")
+    });
+    socket.on('message', function(data) {
+  var message = JSON.parse(data);
+  $('#messages').append($('<p>').html('<span class="username" style="color:' + message.color + ';">' + message.username + '</span>: ' + message.message));
+  var messagesContainer = document.getElementById("messages");
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+});
+
+    $('#dispatchBtn').on('click', function() {
+        if ($("#message").val().length == 0 ){
+            return
+        }
+        else {
+            var color = getRandomColor();
+            var message = {
+                username: '{{ session["username"] }}',
+                message: $('#message').val(),
+                color: color
+            };
+            socket.send(JSON.stringify(message));
+            $('#message').val('');
+            $('#username').prop("disabled", true);
+            $('#msg').css("display", "none")
+        }
+    });
+    $('#message').on('keydown', function(event) {
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        $('#dispatchBtn').click();
+      }
+    });
+});
+
+function myFunction() {
+    $('#form').submit();
+}
+
+window.onclick = function(event) {
+  let modal = document.getElementById("myModal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+  
+function closeModal() {
+  let modal = document.getElementById("myModal");
+  modal.style.display = "none";
+}
+  
+function add() {
+  let modal = document.getElementById("myModal");
+  modal.style.display = "block";
+}
+  
+$(document).ready(function() {
+  $(".dropbtn").on("click", function() {
+    $("#myDropdown").toggleClass("show");
+  });
+
+  $(document).on("click", function(event) {
+    if (!$(event.target).hasClass("dropbtn")) {
+      var dropdowns = $(".dropdown-content");
+      dropdowns.each(function() {
+        var openDropdown = $(this);
+        if (openDropdown.hasClass("show")) {
+          openDropdown.removeClass("show");
+        }
+      });
+    }
+  });
+});
+  
+function setDarkMode() {
+  const checkbox = document.getElementById("darkmode-toggle");
+  const checked = checkbox.checked;
+  localStorage.setItem("val", checked);
+  const backgroundColor = checked ? "#121212" : "";
+  const backgroundImage = checked ? "none" : "";
+  const color = checked ? "white" : "";
+  const navbarBackgroundColor = checked ? "#1a1a1a" : "";
+  const chatBackgroundColor = checked ? "#1a1a1a" : "";
+  const contBackgroundColor = checked ? "#1a1a1a" : "";
+  const groupnavColor = checked ? "white" : "";
+  const groupnavBorder = checked ? "1px solid black" : "";
+  const groupnavBackgroundColor = checked ? "#1a1a1a" : "";
+  const messagesBackgroundColor = checked ? "#1a1a1a" : "";
+  const messagesColor = checked ? "white" : "";
+  const messagesFontWeight = checked ? "100" : "";
+  const typeBackgroundColor = checked ? "#262626" : "";
+  const emojiFilter = checked ? "invert(100%) sepia(7%) saturate(0%) hue-rotate(23deg) brightness(104%) contrast(111%)" : "";
+  const userFilter = checked ? "invert(100%) sepia(7%) saturate(0%) hue-rotate(23deg) brightness(104%) contrast(111%)" : "";
+  const sendFilter = checked ? "invert(100%) sepia(7%) saturate(0%) hue-rotate(23deg) brightness(104%) contrast(111%)" : "";
+  const colorWhite = checked ? "white" : "";
+  const elements = [
+    {selector: "body", properties: {backgroundColor, backgroundImage, color}},
+    {selector: ".navbar", properties: {backgroundColor: navbarBackgroundColor}},
+    {selector: ".chat", properties: {backgroundColor: chatBackgroundColor, border: checked ? "none" : ""}},
+    {selector: ".contacts", properties: {background: contBackgroundColor, border: checked ? "none" : ""}},
+    {selector: ".groupnav", properties: {color: groupnavColor, borderBottom: groupnavBorder, backgroundColor: groupnavBackgroundColor}},
+    {selector: "#messages", properties: {backgroundColor: messagesBackgroundColor, color: messagesColor, fontWeight: messagesFontWeight}},
+    {selector: ".type", properties: {backgroundColor: typeBackgroundColor, border: checked ? "none" : ""}},
+    {selector: "#message", properties: {color: colorWhite, border: checked ? "none" : ""}},
+    {selector: ".emoji", properties: {filter: emojiFilter}},
+    {selector: ".send", properties: {filter: sendFilter}},
+    {selector: ".user", properties: {filter: userFilter}},
+    {selector: "h3", properties: {color: colorWhite}},
+    {selector: "li", properties: {color: colorWhite}},
+    {selector: "#msg", properties: {color: colorWhite}},
+    {selector: "#conheading", properties: {color: colorWhite}},
+  ];
+
+  for (const element of elements) {
+    document.querySelectorAll(element.selector).forEach(e => {
+      Object.assign(e.style, element.properties);
+    });
+  }
+}
+  
+document.addEventListener("DOMContentLoaded", function() {
+  const checked = JSON.parse(localStorage.getItem("val"));
+  const checkbox = document.getElementById("darkmode-toggle");
+  checkbox.checked = checked;
+  setDarkMode();
+});
+  
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+</script>
+
+    <div class="navbar">
+			<ul>
+        <input onclick="setDarkMode()" type="checkbox" id="darkmode-toggle">
+        <label class="dark" for="darkmode-toggle"></label>
+        <div id="left">
+				  <li><a class="dropbtn">{{ session['username'] }}</a></li>
+				  <img style="width: 40px;" src="/static/avatar.png">
+        </div>
+			</ul>
+		</div>
+  <div id="myDropdown" class="dropdown-content">
+          <form id="form" action="{{ url_for("logout")}}" method="GET">
+            <a href="#">Profile</a>
+            <a href="#">Settings</a>
+            <a onclick="myFunction()">Logout</a>
+          </form>
+        </div>
+    <div class="contacts">
+		  <h3 id="conheading">Contacts</h3>
+		  <img class="user" onclick="add()" src="/static/add-line.svg" width="45px">
+	  </div>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+          <img onclick="closeModal()" id="close" src="/static/close.svg">
+          <h1>NEW CONTACT</h1>
+          <h3>Username</h3>
+          <input id="name" name="name" placeholder="ishowspeed">
+          <button>Add Friend</button>
+        </div>
+      </div>
+    <div class="chat">
+		<div class="groupnav">
+			<h3>General Chat</h3>
+		</div>
+		<div class="messages" id="messages">
+			<p id="msg">Messages will be displayed here:</p>
+        	{% for message in messages %}
+            	<p><span class="username" style="color:{{ message["color"] }}; cursor: pointer;">{{ message["username"] }}</span>: {{ message["message"] }}</p>
+        	{% endfor %}
+		</div>
+		<div class="type">
+			<img src="/static/emoji.svg" width="38px" class="emoji">
+        	<input id="message" type="text" name="message" autocomplete="off" placeholder="Messsage General">
+        	<img id="dispatchBtn" src="/static/send.svg" width="38px" class="send">
+		</div>
+</div>
+  <script src="{{url_for('static', filename='js/vanillaEmojiPicker.js')}}"></script>
+  <script>
+    new EmojiPicker({
+    trigger: [
+        {
+          selector: '.emoji',
+          insertInto: ['#message'] // '.selector' can be used without array
+        },
+    ],
+    closeButton: true,
+  });
+  </script>
+</body>
+</html>

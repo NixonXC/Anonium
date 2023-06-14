@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonium</title>
+    <meta name="description" content="Anonium Sign-up">
+    <meta name="theme-color" content="#d91e1e">
+    <meta name="twitter:image" content="https://i.imgur.com/bsHpnIM.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="main" style="border-radius: 1px;">
+        <h1>Sign up</h1>
+        <form action="{{ url_for("signup")}}" method="POST">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="password" name="password" id="password" placeholder="Password" required>
+            <button type="submit" id="signupBtn">Create</button>
+        </form>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <p>Already have an account? <a href="/login">Log in</a></p>
+    </div>
+</body>
+</html>

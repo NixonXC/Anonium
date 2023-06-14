@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <meta name="description" content="Admin Panel">
+    <meta name="theme-color" content="#d91e1e">
+    <meta name="twitter:image" content="https://i.imgur.com/bsHpnIM.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+        .main {
+            margin-right: 30px;
+            margin-top: 30px;
+        }
+        .main form {
+            margin-bottom: 20px;
+        }
+        iframe {
+            margin-right: auto;
+            margin-bottom: 0px;
+            width: 375px;
+            height: 667px;
+            margin-top: 30px;
+            border: 1px solid #141114 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <form action="{{ url_for("delchat")}}" method="POST">
+                <h3 style="margin-left: 25px;">Delete All Chats</h3>
+                <button type="submit">Delete</button>
+            </form>
+          <hr>
+            <form action="{{ url_for("ban")}}" method="POST">
+                <h3 style="margin-left: 25px;">Ban User</h3>
+                <input name="banuser" placeholder="Username">
+                <button type="submit">Ban</button>
+                {% if error %}
+                    <p class="error">{{ error }}</p>
+                {% endif %}
+                {% if msg %}
+                    <p class="error">{{ msg }}</p>
+                {% endif %}
+            </form>
+          <hr>
+            <form action="{{ url_for("delone")}}" method="POST">
+              <h3 style="margin-left: 25px;">Delete Specific Message</h3>
+              <input name="msg" placeholder="Message">
+              <button type="submit">Delete</button>
+            </form>
+          <hr>
+            <form action="{{ url_for("adminlogout")}}" method="POST">
+                <h3 style="margin-left: 25px;">Logout From Panel</h3>
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+        <iframe src="/chat"></iframe>
+    </div>
+</body>
+</html>

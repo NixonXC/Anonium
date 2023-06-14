@@ -1,0 +1,89 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@300&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+body {
+  background-image: url(/static/background.png);
+  color: white;
+  font-family: "Kanit", sans-serif;
+}
+.main {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid transparent;
+  text-align: left;
+  width: 300px;
+  box-shadow: -3px -3px 10px #000000a2, 3px 3px 7px rgba(147, 149, 151, 0.671);
+  border-radius: 6px;
+  font-family: "Montserrat", sans-serif;
+  color: white;
+  background: rgba(0, 0, 0, 0.43);
+  margin-top: 200px;
+  font-weight: 900;
+  height: inherit;
+  min-height: 300px;
+}
+.main h1 {
+  padding-left: 25px;
+  font-family: "Bebas Neue", cursive;
+  letter-spacing: 3px;
+}
+.main p {
+  text-align: left;
+  padding-left: 20px;
+}
+a {
+  color: #002ae7;
+  font-family: "Montserrat", sans-serif;
+  text-decoration: none;
+}
+a:hover {
+  color: #627df8;
+  transition: 0.3s;
+}
+input {
+  height: 40px;
+  flex: 0 0 200px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  width: 240px;
+  font-size: 18px;
+  border: 1px solid rgb(160, 160, 160);
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  margin-top: 10px;
+  font-family: "Montserrat", sans-serif;
+  outline: none;
+  padding-left: 10px;
+}
+::placeholder {
+  font-family: "Montserrat", sans-serif;
+}
+button {
+  display: block;
+  padding: 12.6px;
+  border: none;
+  width: 250px;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  background-color: #e3e3e3e7;
+  color: black;
+  font-size: 17px;
+  margin-left: auto;
+  margin-top: 20px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  margin-right: auto;
+  -webkit-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+}
+button:hover {
+  background-color: #ff1a1a;
+  color: white;
+}
