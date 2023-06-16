@@ -89,7 +89,7 @@ def login():
       username = request.form.get("username")
       password = request.form.get("password")
       if username == "admin":
-        if password == "zu1G5ew5MlD68ijY":
+        if password == "Your password Here":
           session['admin'] = "valid"
           session['username'] = "admin"
           return redirect("/panel")
