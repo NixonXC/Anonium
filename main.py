@@ -6,6 +6,7 @@ import os
 from flask_socketio import SocketIO, send
 from pymongo import MongoClient
 from flask import flash
+import bcrypt
 
 app = Flask(__name__)
 app.secret_key = "pyc"  # Moved this line up
@@ -13,7 +14,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 mongo = os.getenv("mongodb")
 
-mongodb = mongo
+mongodb = "mongodb+srv://nuko:AY9tF8qDpWn9RKnV@nuko.irvr0mh.mongodb.net/?retryWrites=true&w=majority"
 
 # Initialize MongoDB client and connect to the database
 client = MongoClient(mongodb)
@@ -32,7 +33,7 @@ def handle_message(message):
       "message": message_obj["message"],
       "color": message_obj["color"]
     })
-    if messages_collection.count_documents({}) >= 50:
+    if messages_collection.count_documents({}) >= 1000:
       messages_collection.delete_many({})
     send(message, broadcast=True)
 
@@ -62,49 +63,63 @@ def root():
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-  if 'username' in session:
-    return redirect('/chat')
-  else:
-    if request.method == "POST":
-      username = request.form.get("username")
-      password = request.form.get("password")
-      existing_user = users_collection.find_one({"username": username})
-      if existing_user:
-        error = "Username already taken. Please choose a different one."
-        return render_template("signup.html", error=error)
-      else:
-        post = {'username': username, 'password': password}
-        users_collection.insert_one(post)
-        session['username'] = username
+    if 'username' in session:
         return redirect('/chat')
-    return render_template("signup.html")
+    else:
+        if request.method == "POST":
+            username = request.form.get("username")
+            password = request.form.get("password")
+
+            # Hash the password
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
+            existing_user = users_collection.find_one({"username": username})
+            if existing_user:
+                error = "Username already taken. Please choose a different one."
+                return render_template("signup.html", error=error)
+            else:
+                post = {'username': username, 'password': hashed_password}
+                users_collection.insert_one(post)
+                session['username'] = username
+                return redirect('/chat')
+        return render_template("signup.html")
 
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
-  if 'username' in session:
-    return redirect('/chat')
-  else:
-    if request.method == "POST":
-      username = request.form.get("username")
-      password = request.form.get("password")
-      if username == "admin":
-        if password == "Your password Here":
-          session['admin'] = "valid"
-          session['username'] = "admin"
-          return redirect("/panel")
-      query = {
-        'username' : username,
-        'password' : password
-      }
-      existing_user = users_collection.find_one(query)
-      if existing_user:
-        session['username'] = username
+    if 'username' in session:
         return redirect('/chat')
-      else:
-        error = "Account does not exist. Please create a new account first."
-        return render_template("signup.html", error=error)
-  return render_template("login.html")
+    else:
+        if request.method == "POST":
+            username = request.form.get("username")
+            password = request.form.get("password")
+            
+            # Check if the user is admin
+            if username == "admin":
+                admin_user = users_collection.find_one({"username": "admin"})
+                if admin_user and bcrypt.checkpw(password.encode('utf-8'), admin_user['password']):
+                    session['admin'] = "valid"
+                    session['username'] = "admin"
+                    return redirect("/panel")
+                else:
+                    error = "Invalid admin credentials. Please try again."
+                    return render_template("login.html", error=error)
+
+            query = {'username': username}
+            existing_user = users_collection.find_one(query)
+            if existing_user:
+                # Compare the hashed password with the provided password
+                if bcrypt.checkpw(password.encode('utf-8'), existing_user['password']):
+                    session['username'] = username
+                    return redirect('/chat')
+                else:
+                    error = "Invalid password. Please try again."
+                    return render_template("login.html", error=error)
+            else:
+                error = "Account does not exist. Please create a new account first."
+                return render_template("signup.html", error=error)
+        return render_template("login.html")
+
 
 
 @app.route('/del', methods=["POST"])
@@ -121,7 +136,7 @@ def ban():
     existing_user = users_collection.find_one({"username": username})
     if existing_user:
       users_collection.delete_one({'username': username})
-      msg = f"Successfully banned {username}."
+      msg = f"Successfully banned {username}"
       return render_template("panel.html", ms=msg)
     else:
       error = "Account does not exist."
