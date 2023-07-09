@@ -18,16 +18,17 @@
   var socket = io.connect();
 
   socket.on('connect', function() {
-    socket.emit('general-message', 'User Connected!');
+    socket.emit('media-message', 'User Connected!');
   });
 
-  socket.on('general-message', function(data) {
+  socket.on('media-message', function(data) {
     var message = JSON.parse(data);
     $('#messages').append($('<p>').html('<span class="username" style="color:' + message.color + ';">' + message.username + '</span>: ' + message.message));
     var messagesContainer = document.getElementById("messages");
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   });
-            
+
+  // Rest of your code...
   $('#dispatchBtn').on('click', function() {
     if ($("#message").val().length == 0) {
         return;
@@ -38,7 +39,7 @@
             message: $('#message').val(),
             color: color
         };
-        socket.emit('general-message', JSON.stringify(message));
+        socket.emit('media-message', JSON.stringify(message));
         $('#message').val('');
         $('#username').prop("disabled", true);
         $('#msg').css("display", "none");
@@ -111,7 +112,7 @@
             {selector: "li", properties: {color: colorWhite}},
             {selector: "#msg", properties: {color: colorWhite}},
             {selector: "#conheading", properties: {color: colorWhite}},
-            {selector: ".cname", properties: {color: colorWhite}},
+
             ];
             
             for (const element of elements) {
@@ -159,7 +160,7 @@
             <a href="/chat"><div class="general">
                 <h3>#<span class="cname">General Chat</span></h3>
             </div></a>
-            <a href="/coding"><div class="media">
+            <a href="/coding"><div class="coding">
                 <h3>#<span class="cname">Coding Help</span></h3>
             </div></a>
             <a href="/media"><div class="media">
@@ -168,7 +169,7 @@
         </div>
         <div class="chat">
             <div class="groupnav">
-                <h3>General Chat</h3>
+                <h3>Media</h3>
             </div>
             <div class="messages" id="messages">
                 <p id="msg">Messages will be displayed here:</p>

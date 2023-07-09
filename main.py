@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 from flask import send_from_directory
 import json
 import os
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send, emit
 from pymongo import MongoClient
 from flask import flash
 import bcrypt
@@ -21,21 +21,50 @@ client = MongoClient(mongodb)
 db = client["anonium"]
 messages_collection = db["messages"]
 users_collection = db["users"]
+coding_messages_collection = db["coding"]
+media_messages = db["media"]
 
+@socketio.on('general-message')
+def handle_general_message(message):
+    print("Message: " + message)
+    if message != "User Connected!":
+        message_obj = json.loads(message)
+        messages_collection.insert_one({
+            "username": session['username'],
+            "message": message_obj["message"],
+            "color": message_obj["color"]
+        })
+        if messages_collection.count_documents({}) >= 1000:
+            messages_collection.delete_many({})
+        emit('general-message', message, broadcast=True)
 
-@socketio.on('message')
-def handle_message(message):
-  print("Message: " + message)
-  if message != "User Connected!":
-    message_obj = json.loads(message)
-    messages_collection.insert_one({
-      "username": session['username'],
-      "message": message_obj["message"],
-      "color": message_obj["color"]
-    })
-    if messages_collection.count_documents({}) >= 1000:
-      messages_collection.delete_many({})
-    send(message, broadcast=True)
+@socketio.on('coding-message')
+def handle_coding_message(message):
+    print("Message: " + message)
+    if message != "User Connected!":
+        message_obj = json.loads(message)
+        coding_messages_collection.insert_one({
+            "username": session['username'],
+            "message": message_obj["message"],
+            "color": message_obj["color"]
+        })
+        if coding_messages_collection.count_documents({}) >= 1000:
+            coding_messages_collection.delete_many({})
+        emit('coding-message', message, broadcast=True)
+
+@socketio.on('media-message')
+def handle_media_messages(message):
+    print("Message: " + message)
+    if message != "User Connected!":
+        message_obj = json.loads(message)
+        media_messages.insert_one({
+            "username": session['username'],
+            "message": message_obj["message"],
+            "color": message_obj["color"]
+        })
+        if media_messages.count_documents({}) >= 1000:
+            media_messages.delete_many({})
+        emit('media-message', message, broadcast=True)
 
 @app.route('/logout')
 def logout():
@@ -125,7 +154,13 @@ def login():
 @app.route('/del', methods=["POST"])
 def delchat():
   if request.method == "POST":
-    messages_collection.delete_many({})
+    room = request.form.get('room')
+    if room == "general":
+        messages_collection.delete_many({})
+    elif room == "coding":
+        coding_messages_collection.delete_many({})
+    elif room == "media":
+        media_messages.delete_many({})
     return redirect('/panel')
 
 
@@ -180,6 +215,23 @@ def chat():
   else:
     return redirect('/signup')
 
+@app.route('/coding')
+def coding():
+  if 'username' in session:
+    messages = list(coding_messages_collection.find().sort("_id", -1))
+    messages.reverse()
+    return render_template("coding.html", messages=messages)
+  else:
+    return redirect('/signup')
+
+@app.route('/media')
+def media():
+  if 'username' in session:
+    messages = list(media_messages.find().sort("_id", -1))
+    messages.reverse()
+    return render_template("media.html", messages=messages)
+  else:
+    return redirect('/signup')
 
 if __name__ == "__main__":
-  socketio.run(app, host="0.0.0.0", port=8080)
+  socketio.run(app, host="0.0.0.0", port=8080, debug=True)

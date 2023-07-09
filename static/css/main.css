@@ -46,6 +46,35 @@ a {
   color: white;
   font-size: 60px;
 }
+.banner {
+  height: 180px;
+  width: 350px;
+  cursor: pointer;
+}
+.general {
+  border-bottom: none;
+}
+.contacts div {
+  border: 1px solid rgba(54, 54, 54, 0.979);
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  border-left: none;
+  border-right: none;
+}
+.contacts div h3 {
+  padding-left: 20px;
+  text-decoration: none;
+  font-size: 15px;
+}
+.contacts div a {
+  color: black;
+}
+a {
+  text-decoration: none;
+}
+.cname {
+  padding-left: 20px;
+}
 #msg {
   user-select: none;
   -moz-user-select: none;
@@ -61,17 +90,17 @@ a {
   width: 900px;
   margin-left: 50px;
   height: 575px;
-  border: 1px solid rgb(216, 216, 216);
+  border: 1px solid rgba(54, 54, 54, 0.979);
   background-color: #f7fbfe;
   margin-top: 20px;
   overflow-x: hidden;
   font-family: "Kanit", sans-serif;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 .contacts {
   display: inline-block;
   height: 575px;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow-x: hidden;
   vertical-align: top;
   margin-top: 20px;
@@ -79,7 +108,7 @@ a {
   background-color: #f7fbfe;
   margin-left: 115px;
   border: none;
-  border: 1px solid rgb(216, 216, 216);
+  border: 1px solid rgba(54, 54, 54, 0.979);
 }
 .user {
   margin-top: 15px;
@@ -90,7 +119,7 @@ a {
   color: rgb(0, 0, 0);
   display: inline-block;
   margin-left: 20px;
-  font-family: "Kanit", sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 .messages {
   overflow: scroll;
@@ -508,5 +537,22 @@ button:hover {
   }
   .contacts {
     display: none;
+  }
+}
+@media only screen and (min-width: 1924px) {
+  .contacts {
+    height: 700px !important;
+    margin-top: 70px;
+    margin-left: 350px;
+  }
+  .chat {
+    margin-top: 70px;
+    height: 700px;
+  }
+  #messages {
+    height: 530px;
+  }
+  .type {
+    margin-bottom: -200px;
   }
 }
