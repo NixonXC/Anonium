@@ -12,10 +12,7 @@ app = Flask(__name__)
 app.secret_key = "pyc"  # Moved this line up
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-mongo = os.getenv("mongodb")
-
-mongodb = "mongodb+srv://nuko:AY9tF8qDpWn9RKnV@nuko.irvr0mh.mongodb.net/?retryWrites=true&w=majority"
-
+mongodb = os.getenv("mongodb")
 # Initialize MongoDB client and connect to the database
 client = MongoClient(mongodb)
 db = client["anonium"]
